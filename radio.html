@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html ng-app="selectApp">
+<head>
+  <title>ng-select</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <script src="js/angular-1.3.0.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <style type="text/css">
+    * {
+      font-family:'MICROSOFT YAHEI'
+    }
+    tr{
+      border:1px solid #ccc;
+      padding:6px;
+    }
+    .progBox{
+      height:24px;
+      background:yellow;
+      display:inline-block;
+      width:45px;
+    }
+    .proline{
+      display:inline-block;
+      width:60%;
+      height:100%;
+      background:skyblue;
+    }
+    .mana-ul{
+      list-style: none;
+      width:100%;
+      height:auto;
+      overflow: hidden;
+      padding-left:0;
+    }
+    .mana-ul li{
+      width:100%;
+      overflow: hidden;
+      border-bottom:1px solid #ccc;
+      margin-bottom:8px;
+    }
+    .flpad{
+      float:left;
+      margin-left:106px !important;
+    }
+    .label-pd8{
+      padding:0 8px;
+      min-width:80px;
+    }
+    label{
+      float:left !important;
+    }
+    .bd{
+      border-bottom:1px solid #eeecec;
+      overflow: hidden;
+      background: #fff;
+    }
+    .item_field_label{
+      float: left;
+      margin: 7px 0;
+      padding: 10px 10px;
+      min-height: 36px;
+      width: 150px;
+      box-sizing: border-box;
+      font-size: 14px;
+      border-right: 1px solid #efefef;
+      color: #9da1c4;
+    }
+
+    .item_field_value{
+      float: left;
+      width: 700px;
+      box-sizing: border-box;
+      font-size: 14px;
+      min-height: 50px;
+      padding: 14px;
+    }
+    .item-center{
+      padding:16px;
+      background-color: #eee;
+    }
+    input{
+      float:left;
+    }
+  </style>
+</head>
+<body >
+
+    <div  ng-controller="myCtrl">
+
+        <ul class="mana-ul">
+            <li ng-repeat="item in sysList">
+                <div style="overflow: hidden;">
+                    <div class="item_field_label">子系统</div>
+                    <div class="item_field_value">
+                        <select selectpicker ng-model="item.sys" ng-options="m as m for m in sysSelect" style="float: left;!important;
+                background-color: #004a70;height: 30px;color: white">
+                            <option value="">Choose</option>
+                        </select>
+
+                        <label for="" class="col-sm-2 control-label">分支:</label>
+                        <input id="" class="form-control" style="float:left;width:200px;" placeholder="" ng-model="item.branch">
+
+                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="plus(item)" ><i class="glyphicon glyphicon-plus"></i></button>
+
+                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="minus(item)" ><i class="glyphicon glyphicon-minus"></i></button>
+
+                    </div>
+                </div>
+
+                <selectprog chanenvir="{{item.chanEnvir}}"  chanprog="{{item.chanProg}}" chanindex="sysList.indexOf({{item}})"></selectprog>
+            </li>
+        </ul>
+
+    </div>
+
+
+
+
+    <script >
+
+      var selectApp = angular.module('selectApp',[]);
+      selectApp.controller('myCtrl',function($scope,$http,$interval){
+
+          $scope.plusOperat = false;
+          $scope.sysSelect = ["a","b","c","d"];
+          $scope.sysList = [
+              {
+                  "sys":'',
+                  "branch":'',
+                  "chanEnvir":1,
+                  "chanProg":2
+              },
+              {
+                  "sys":'',
+                  "branch":'',
+                  "chanEnvir":3,
+                  "chanProg":2
+              },
+              {
+                  "sys":'',
+                  "branch":'',
+                  "chanEnvir":1,
+                  "chanProg":3
+              }
+          ];
+
+
+
+          $scope.plus = function(item){
+              var index = $scope.sysList.indexOf(item);
+              $scope.sysList.splice(index+1,0,{
+                  "sys":'',
+                  "branch":'',
+                  "chanEnvir":1,
+                  "chanProg":1
+              });
+              if($scope.sysList.length == 0){
+                  $scope.plusOperat = true;
+
+              }else{
+                  $scope.plusOperat = false;
+              }
+          }
+
+          $scope.minus = function(item){
+              if($scope.sysList.length > 0){
+                  var index = $scope.sysList.indexOf(item);
+                  if (index !== -1) {
+                      $scope.sysList.splice(index, 1);
+                  }
+              }
+              if($scope.sysList.length == 0){
+                  $scope.plusOperat = true;
+                  console.log($scope.sysList.length);
+              }else{
+                  $scope.plusOperat = false;
+              }
+          }
+
+          $scope.changeRequire = 1;
+
+          $scope.saveEdit = function(){
+              console.log($scope.sysList);
+          }
+
+      })
+
+
+
+
+
+      selectApp.directive("selectprog",function($interval,$http){
+          return {
+              restrict : 'EA',
+              replace : true,
+              transclude : true,
+              require : '^?accordion',
+              // scope:{
+              //
+              // },
+              template:'<div>\
+                    <div style="overflow:hidden;">\
+                    <input name="envir{{chanindex}}" type="radio" value="1" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">STB</label>\
+                    <input name="envir{{chanindex}}" type="radio" value="2" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">SIT</label>\
+                    <input name="envir{{chanindex}}" type="radio" value="3" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRE</label>\
+                    <input name="envir{{chanindex}}" type="radio" value="4" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRD</label>\
+                    </div>\
+                    <div style="overflow:hidden;">\
+                    <input name="pro{{chanindex}}" type="radio" value="1" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">提测</label>\
+                    <input name="pro{{chanindex}}" type="radio" value="2" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试中</label>\
+                    <input name="pro{{chanindex}}" type="radio" value="3" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试完成</label>\
+                    </div>\
+                    </div>',
+              link:function($scope, $element, $attrs){
+
+                  $scope.chanEnvir = $attrs.chanenvir;
+                  $scope.chanProg = $attrs.chanprog;
+                  $scope.chanindex = $attrs.chanindex;
+                  console.log($scope.chanindex);
+
+                  $scope.chanEnvir = 1;
+                  $scope.chanProg = 1;
+                  $scope.index = 0;
+                  $scope.changeEnviron = function(){
+                      $scope.chanProg = 1;
+                      // $scope.index = $scope.sysList.indexOf($attrs.itemattr);
+                      // $scope.sysList[$scope.index].chanEnvir = $scope.chanEnviritem;
+                      // $scope.sysList[$scope.index].chanProg = $scope.chanProgitem;
+                  }
+                  $scope.changeprogre = function(){
+
+                  }
+
+
+              }
+
+          }
+      });
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+

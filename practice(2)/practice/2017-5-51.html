@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html ng-app="selectApp">
+<head>
+  <title>ng-select</title>
+  <meta charset="utf-8">
+  <script src="js/angular-1.3.0.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <style type="text/css">
+    * {
+      font-family:'MICROSOFT YAHEI'
+    }
+    tr{
+      border:1px solid #ccc;
+      padding:6px;
+    }
+    .prog{
+      height:4px;
+      background:yellow;
+    }
+  </style>
+</head>
+<body >
+
+    <div  ng-controller="myCtrl">
+
+      <accordion>
+         <table>
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>姓名</th>
+                <th>姓名</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="item in lists">
+                <td>{{item.name}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.name}}</td>
+                <td>
+
+                  <div style="display:inline-block;" >
+                    <progre progress={{item.progress}}></progre>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+        </table>
+      </accordion>
+    </div>
+
+
+
+
+    <script >
+
+      var selectApp = angular.module('selectApp',[]);
+      selectApp.controller('myCtrl',function($scope,$http,$interval){
+        $scope.name = "af123132";
+          $scope.lists = [
+            {
+              name : 'amy',
+              ifshow:true
+            },{
+              name : 'blue',
+              ifshow:true
+            },{
+              name : 'duck',
+              ifshow:true
+            }
+          ];
+
+         $scope.execute = function(){
+          console.log("1");
+                      scope.canClick = true;
+
+                      var timer = $interval(
+                        function() {
+
+                         scope.progress = parseInt(100*Math.random());
+
+                           if(scope.progress > 80 ){
+                               scope.isStop = false;
+                            }else{
+
+                            }
+
+                            if (scope.isStop == false){
+                                $interval.cancel(timer);
+                                scope.canClick = false;
+                            }
+
+                        },
+                        500
+                    );
+          }
+
+          // $scope.starTimer = function(){
+          //                    console.log("1");
+
+          //   setInterval(function(){
+
+          //   }
+          //     , 1000);
+          // }
+
+          // $scope.progress='';
+
+          // $scope.ext = function(item){
+          //     var index = $scope.lists.indexOf(item);
+          //     $scope.lists[index].progress = parseInt(100*Math.random());
+
+          // }
+
+      })
+
+    selectApp.directive("accordion",function(){
+          return {
+                restrict:'AE',
+                replace:true,
+                transclude : true,
+                template:'<div ng-transclude></div>',
+                 controller : function() {
+                    var progres = [];
+
+                    // 将所有的进度视图放入集合
+                    this.addProgressView = function(progressView){
+                        progres.push(progressView);
+                    };
+
+                    // 关闭所有进度
+                    this.closeAllProgress = function(){
+                        angular.forEach(progres,function(pro){
+                            pro.canShow = false;
+                            pro.btnDisabled =  false;
+                            pro.stopTimer();
+                        })
+                    };
+                }
+              };
+      });
+
+      selectApp.directive("progre",function($interval){
+          return {
+                  restrict : 'EA',//只能放在元素或者属性上
+                  replace : true, //格式可以替换
+                  transclude : true, //能够让你移动一个标识符的原始子节点到一个新模板的位置
+                  require : '^?accordion',//从在相同元素上的标识符获取控制器，该控制器是可选
+                  scope:{
+
+                  },
+
+                  template:'<div><button ng-click="execute()" ng-disabled="btnDisabled">执行</button><div class="prog"  ng-show="canShow">{{progress}}</div></div>',
+                  link:function(scope, element, attrs, accordionController){
+                        // accordionController.addProgressView(scope);
+
+                        scope.execute = function execute() {
+                            accordionController.closeAllProgress(scope);
+                             scope.canShow = true;
+                             scope.btnDisabled =  true;
+
+                            scope.stopTimer();
+                             scope.timer = $interval(function(){
+                                   scope.progress = parseInt(100*Math.random());
+                                   if (scope.progress >= 80) {
+                                      scope.btnDisabled =  false;
+                                      scope.stopTimer();
+                                   }
+                            },500);
+
+                      };
+                      scope.stopTimer = function(){
+                          if (scope.timer) {
+                              $interval.cancel(scope.timer);
+                            }
+                          };
+                  }
+
+              }
+      });
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+

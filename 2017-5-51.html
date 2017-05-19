@@ -13,9 +13,17 @@
       border:1px solid #ccc;
       padding:6px;
     }
-    .prog{
-      height:4px;
+    .progBox{
+      height:24px;
       background:yellow;
+      display:inline-block;
+      width:45px;
+    }
+    .proline{
+      display:inline-block;
+      width:60%;
+      height:100%;
+      background:skyblue;
     }
   </style>
 </head>
@@ -23,7 +31,7 @@
 
     <div  ng-controller="myCtrl">
 
-      <accordion>
+      <!-- <accordion> -->
          <table>
             <thead>
               <tr>
@@ -39,15 +47,12 @@
                 <td>{{item.name}}</td>
                 <td>{{item.name}}</td>
                 <td>
-
-                  <div style="display:inline-block;" >
                     <progre progress={{item.progress}}></progre>
-                  </div>
                 </td>
               </tr>
             </tbody>
         </table>
-      </accordion>
+      <!-- </accordion> -->
     </div>
 
 
@@ -61,49 +66,43 @@
           $scope.lists = [
             {
               name : 'amy',
-              ifshow:true
+              ifshow:true,
+              id:1
             },{
               name : 'blue',
-              ifshow:true
+              ifshow:true,
+              id:2
             },{
               name : 'duck',
-              ifshow:true
+              ifshow:true,
+              id:3
             }
           ];
 
-         $scope.execute = function(){
-          console.log("1");
-                      scope.canClick = true;
+         // $scope.execute = function(){
+         //  console.log("1");
+         //              scope.canClick = true;
 
-                      var timer = $interval(
-                        function() {
+         //              var timer = $interval(
+         //                function() {
 
-                         scope.progress = parseInt(100*Math.random());
+         //                 scope.progress = parseInt(100*Math.random());
 
-                           if(scope.progress > 80 ){
-                               scope.isStop = false;
-                            }else{
+         //                   if(scope.progress > 80 ){
+         //                       scope.isStop = false;
+         //                    }else{
 
-                            }
+         //                    }
 
-                            if (scope.isStop == false){
-                                $interval.cancel(timer);
-                                scope.canClick = false;
-                            }
+         //                    if (scope.isStop == false){
+         //                        $interval.cancel(timer);
+         //                        scope.canClick = false;
+         //                    }
 
-                        },
-                        500
-                    );
-          }
-
-          // $scope.starTimer = function(){
-          //                    console.log("1");
-
-          //   setInterval(function(){
-
-          //   }
-          //     , 1000);
-          // }
+         //                },
+         //                500
+         //            );
+         //  }
 
           // $scope.progress='';
 
@@ -115,31 +114,31 @@
 
       })
 
-    selectApp.directive("accordion",function(){
-          return {
-                restrict:'AE',
-                replace:true,
-                transclude : true,
-                template:'<div ng-transclude></div>',
-                 controller : function() {
-                    var progres = [];
+    // selectApp.directive("accordion",function(){
+    //       return {
+    //             restrict:'AE',
+    //             replace:true,
+    //             transclude : true,
+    //             template:'<div ng-transclude></div>',
+    //              controller : function() {
+    //                 var progres = [];
 
-                    // 将所有的进度视图放入集合
-                    this.addProgressView = function(progressView){
-                        progres.push(progressView);
-                    };
+    //                 // 将所有的进度视图放入集合
+    //                 this.addProgressView = function(progressView){
+    //                     progres.push(progressView);
+    //                 };
 
-                    // 关闭所有进度
-                    this.closeAllProgress = function(){
-                        angular.forEach(progres,function(pro){
-                            pro.canShow = false;
-                            pro.btnDisabled =  false;
-                            pro.stopTimer();
-                        })
-                    };
-                }
-              };
-      });
+    //                 // 关闭所有进度
+    //                 this.closeAllProgress = function(){
+    //                     angular.forEach(progres,function(pro){
+    //                         pro.canShow = false;
+    //                         pro.btnDisabled =  false;
+    //                         pro.stopTimer();
+    //                     })
+    //                 };
+    //             }
+    //           };
+    //   });
 
       selectApp.directive("progre",function($interval){
           return {
@@ -151,16 +150,17 @@
 
                   },
 
-                  template:'<div><button ng-click="execute()" ng-disabled="btnDisabled">执行</button><div class="prog"  ng-show="canShow">{{progress}}</div></div>',
+                  template:'<div><button ng-click="execute(item.id)" ng-disabled="btnDisabled">执行</button><div class="progBox"  ng-show="canShow"><span class="proline">{{progress}}</span></div></div>',
                   link:function(scope, element, attrs, accordionController){
                         // accordionController.addProgressView(scope);
 
-                        scope.execute = function execute() {
-                            accordionController.closeAllProgress(scope);
+                        scope.execute = function (Gid) {
+                            // accordionController.closeAllProgress(scope);
+                            scope.id = Gid
                              scope.canShow = true;
                              scope.btnDisabled =  true;
 
-                            scope.stopTimer();
+                             scope.stopTimer();
                              scope.timer = $interval(function(){
                                    scope.progress = parseInt(100*Math.random());
                                    if (scope.progress >= 80) {
@@ -191,7 +191,45 @@
 
 
 
+<!-- $scope.execute = function(id) {
+    $scope.canShow = true;
+    $scope.btnDisabled =  true;
+    $scope.id = id;
+    $scope.isStop = true;
+    $scope.style = {width:0+'%'};
 
+    $scope.promise = $http.get(ip+'/groupExecute/execute?id='+ $scope.id,{withCredentials : true}).success(function (data) {
+        $scope.stopTimer();
+        $scope.timer = $interval(function () {
+
+            $scope.promise = $http.get(ip+'/groupExecute/getStauts?id='+$scope.id,{withCredentials : true}).success(function (data) {
+
+                if(data.succeed == false) {
+                    $scope.progress = data.data;
+                }
+                else {
+                    $scope.isStop = false;
+                    $scope.progress = 100;
+                }
+
+                $scope.style = {width:$scope.progress+'%'};
+
+                if ($scope.isStop == false){
+                    console.log("ok");
+                    $scope.stopTimer();
+                    $scope.btnDisabled =  false;
+                }
+            });
+
+        },2000);
+    });
+
+};
+$scope.stopTimer = function(){
+    if ($scope.timer) {
+        $interval.cancel($scope.timer);
+    }
+}; -->
 
 
 
