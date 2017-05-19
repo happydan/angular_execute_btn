@@ -129,19 +129,25 @@
                   "sys":'',
                   "branch":'',
                   "chanEnvir":1,
-                  "chanProg":2
+                  "chanProg":2,
+                  "enviorname":"enviro1",
+                  "progrename":"pro1"
               },
               {
                   "sys":'',
                   "branch":'',
                   "chanEnvir":3,
-                  "chanProg":2
+                  "chanProg":2,
+                  "enviorname":"enviro2",
+                  "progrename":"pro2"
               },
               {
                   "sys":'',
                   "branch":'',
-                  "chanEnvir":1,
-                  "chanProg":3
+                  "chanEnvir":2,
+                  "chanProg":2,
+                  "enviorname":"enviro3",
+                  "progrename":"pro3"
               }
           ];
 
@@ -153,7 +159,9 @@
                   "sys":'',
                   "branch":'',
                   "chanEnvir":1,
-                  "chanProg":1
+                  "chanProg":1,
+                  "enviorname":"enviro"+$scope.sysList.length+1,
+                  "progrename":"pro"+$scope.sysList.length+1
               });
               if($scope.sysList.length == 0){
                   $scope.plusOperat = true;
@@ -200,24 +208,26 @@
               //
               // },
               template:'<div>\
-                    <div style="overflow:hidden;">\
-                    <input name="envir{{chanindex}}" type="radio" value="1" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">STB</label>\
-                    <input name="envir{{chanindex}}" type="radio" value="2" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">SIT</label>\
-                    <input name="envir{{chanindex}}" type="radio" value="3" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRE</label>\
-                    <input name="envir{{chanindex}}" type="radio" value="4" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRD</label>\
-                    </div>\
-                    <div style="overflow:hidden;">\
-                    <input name="pro{{chanindex}}" type="radio" value="1" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">提测</label>\
-                    <input name="pro{{chanindex}}" type="radio" value="2" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试中</label>\
-                    <input name="pro{{chanindex}}" type="radio" value="3" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试完成</label>\
-                    </div>\
-                    </div>',
+                <div style="overflow:hidden">\
+                <input name="{{enviorname}}" type="radio" value="1" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">STB</label>\
+                <input name="{{enviorname}}" type="radio" value="2" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">SIT</label>\
+                <input name="{{enviorname}}" type="radio" value="3" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRE</label>\
+                <input name="{{enviorname}}" type="radio" value="4" ng-model="chanEnvir" ng-change="changeEnviron()"/> <label for="" class="label-pd8">PRD</label>\
+                </div>\
+                <div style="overflow:hidden">\
+                <input name="{{progrename}}" type="radio" value="1" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">提测</label>\
+                <input name="{{progrename}}" type="radio" value="2" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试中</label>\
+                <input name="{{progrename}}" type="radio" value="3" ng-model="chanProg" ng-change="changeprogre()"/> <label for="" class="label-pd8">测试完成</label>\
+                </div>\
+                </div>',
               link:function($scope, $element, $attrs){
 
                   $scope.chanEnvir = $attrs.chanenvir;
                   $scope.chanProg = $attrs.chanprog;
                   $scope.chanindex = $attrs.chanindex;
                   console.log($scope.chanindex);
+
+                  // $scope.enn = "envior"+$scope.chanindex;
 
                   $scope.chanEnvir = 1;
                   $scope.chanProg = 1;
