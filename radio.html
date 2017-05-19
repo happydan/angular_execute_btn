@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <selectprog chanenvir="{{item.chanEnvir}}"  chanprog="{{item.chanProg}}" chanindex="sysList.indexOf({{item}})"></selectprog>
+                <selectprog chanenvir="{{item.chanEnvir}}"  chanprog="{{item.chanProg}}" chan="{{item}}"></selectprog>
             </li>
         </ul>
 
@@ -224,14 +224,17 @@
 
                   $scope.chanEnvir = $attrs.chanenvir;
                   $scope.chanProg = $attrs.chanprog;
-                  $scope.chanindex = $attrs.chanindex;
+
+
+                  $scope.chanindex = $scope.sysList.indexOf($attrs.chan);
                   console.log($scope.chanindex);
 
                   // $scope.enn = "envior"+$scope.chanindex;
 
-                  $scope.chanEnvir = 1;
-                  $scope.chanProg = 1;
-                  $scope.index = 0;
+                  // $scope.chanEnvir = 1;
+                  // $scope.chanProg = 1;
+                  // $scope.index = 0;
+
                   $scope.changeEnviron = function(){
                       $scope.chanProg = 1;
                       // $scope.index = $scope.sysList.indexOf($attrs.itemattr);
