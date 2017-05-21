@@ -86,6 +86,9 @@
 </head>
 <body >
 
+
+
+
     <div  ng-controller="myCtrl">
 
         <ul class="mana-ul">
@@ -101,18 +104,21 @@
                         <label for="" class="col-sm-2 control-label">分支:</label>
                         <input id="" class="form-control" style="float:left;width:200px;" placeholder="" ng-model="item.branch">
 
-                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="plus(item)" ><i class="glyphicon glyphicon-plus"></i></button>
+                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="plus($index)" ><i class="glyphicon glyphicon-plus"></i></button>
 
-                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="minus(item)" ><i class="glyphicon glyphicon-minus"></i></button>
+                        <button type="button"  class="btn btn-danger btn-sm color44" ng-click="minus($index)" ><i class="glyphicon glyphicon-minus"></i></button>
 
                     </div>
                 </div>
 
-                <selectprog chanenvir="{{item.chanEnvir}}"  chanprog="{{item.chanProg}}" chan="{{item}}"></selectprog>
+                <selectprog  chanenvir="{{item.chanEnvir}}"  chanprog="{{item.chanProg}}"  enviorname="{{item.enviorname}}" progrename="{{item.progrename}}"></selectprog>
             </li>
         </ul>
 
+        <button ng-click="saveEdit()">保存</button>
+
     </div>
+
 
 
 
@@ -138,30 +144,52 @@
                   "branch":'',
                   "chanEnvir":3,
                   "chanProg":2,
-                  "enviorname":"enviro2",
-                  "progrename":"pro2"
+                  "enviorname":"enviro22",
+                  "progrename":"pro22"
               },
               {
                   "sys":'',
                   "branch":'',
                   "chanEnvir":2,
                   "chanProg":2,
-                  "enviorname":"enviro3",
-                  "progrename":"pro3"
+                  "enviorname":"enviro33",
+                  "progrename":"pro33"
               }
           ];
 
+          $scope.radioNameLe =  $scope.sysList.length;
+          $scope.radioArr=[];
+          for(var i=0; i<$scope.radioNameLe;i++){
+              $scope.radioArr.push($scope.sysList[i].enviorname);
+          }
+          console.log($scope.radioArr);
+          for(var i=0; i<$scope.radioNameLe;i++){
+              $scope.radioArr[i] =  parseInt($scope.radioArr[i].replace(/[^0-9]/ig,"")); //获取字符串里面的数字
+          }
+          console.log($scope.radioArr);
+
+          $scope.tmp = 1;
+          for(var i=0; i<$scope.radioNameLe;i++){
+              if($scope.radioArr[i]>$scope.tmp){
+                $scope.tmp = $scope.radioArr[i];
+              }
+          }
 
 
-          $scope.plus = function(item){
-              var index = $scope.sysList.indexOf(item);
+          console.log($scope.tmp);
+
+
+          $scope.plus = function(atIndex){
+              var index = atIndex;
+              $scope.tmp +=1;
+
               $scope.sysList.splice(index+1,0,{
                   "sys":'',
                   "branch":'',
                   "chanEnvir":1,
                   "chanProg":1,
-                  "enviorname":"enviro"+$scope.sysList.length+1,
-                  "progrename":"pro"+$scope.sysList.length+1
+                  "enviorname":"enviro"+($scope.tmp),
+                  "progrename":"pro"+($scope.tmp)
               });
               if($scope.sysList.length == 0){
                   $scope.plusOperat = true;
@@ -171,16 +199,15 @@
               }
           }
 
-          $scope.minus = function(item){
+          $scope.minus = function(atIndex){
               if($scope.sysList.length > 0){
-                  var index = $scope.sysList.indexOf(item);
+                  var index = atIndex;
                   if (index !== -1) {
                       $scope.sysList.splice(index, 1);
                   }
               }
               if($scope.sysList.length == 0){
                   $scope.plusOperat = true;
-                  console.log($scope.sysList.length);
               }else{
                   $scope.plusOperat = false;
               }
@@ -188,9 +215,16 @@
 
           $scope.changeRequire = 1;
 
+          $scope.changevalue = function(achanEnvir,achanProg,atIndex){
+            $scope.sysList[atIndex].chanEnvir = achanEnvir;
+            $scope.sysList[atIndex].chanProg = achanProg;
+          }
+
           $scope.saveEdit = function(){
               console.log($scope.sysList);
           }
+
+
 
       })
 
@@ -205,7 +239,7 @@
               transclude : true,
               require : '^?accordion',
               // scope:{
-              //
+              //   bindfunc:'&'
               // },
               template:'<div>\
                 <div style="overflow:hidden">\
@@ -224,25 +258,20 @@
 
                   $scope.chanEnvir = $attrs.chanenvir;
                   $scope.chanProg = $attrs.chanprog;
+                  $scope.enviorname = $attrs.enviorname;
+                  $scope.progrename = $attrs.progrename;
+
+                  console.log($scope.sysList);
 
 
-                  $scope.chanindex = $scope.sysList.indexOf($attrs.chan);
-                  console.log($scope.chanindex);
-
-                  // $scope.enn = "envior"+$scope.chanindex;
-
-                  // $scope.chanEnvir = 1;
-                  // $scope.chanProg = 1;
-                  // $scope.index = 0;
 
                   $scope.changeEnviron = function(){
                       $scope.chanProg = 1;
-                      // $scope.index = $scope.sysList.indexOf($attrs.itemattr);
-                      // $scope.sysList[$scope.index].chanEnvir = $scope.chanEnviritem;
-                      // $scope.sysList[$scope.index].chanProg = $scope.chanProgitem;
+
+                      $scope.changevalue($scope.chanEnvir,$scope.chanProg,$scope.$index);
                   }
                   $scope.changeprogre = function(){
-
+                      $scope.changevalue($scope.chanEnvir,$scope.chanProg,$scope.$index);
                   }
 
 
